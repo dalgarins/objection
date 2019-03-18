@@ -442,16 +442,13 @@ def _download_android(path: str, destination: str) -> None:
         click.secho('Unable to download file. Target path is not readable.', fg='red')
         return
 
-    if not api.android_file_path_is_file(path):
-        click.secho('Unable to download file. Target path is not a file.', fg='yellow')
-        return
-
     click.secho('Streaming file from device...', dim=True)
     file_data = api.android_file_download(path)
 
     click.secho('Writing bytes to destination...', dim=True)
-    with open(destination, 'wb') as fh:
-        fh.write(bytearray(file_data['data']))
+    for file_ in file_data.items():
+        with open(file_['path'], 'wb') as fh:
+            fh.write(bytearray(file_['files']))
 
     click.secho('Successfully downloaded {0} to {1}'.format(path, destination), bold=True)
 

@@ -18,7 +18,7 @@ export const android = {
 
   // android filesystem
   androidFileCwd: () => androidfilesystem.pwd(),
-  androidFileDownload: (path: string) => androidfilesystem.readFile(path),
+  androidFileDownload: (path: string) => androidfilesystem.fileDownload(path),
   androidFileExists: (path: string) => androidfilesystem.exists(path),
   androidFileLs: (path: string) => androidfilesystem.ls(path),
   androidFilePathIsFile: (path: string) => androidfilesystem.pathIsFile(path),

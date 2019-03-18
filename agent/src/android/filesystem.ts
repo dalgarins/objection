@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import { hexStringToBytes } from "../lib/helpers";
 import { IAndroidFilesystem } from "./lib/interfaces";
 import { getApplicationContext, wrapJavaPerform } from "./lib/libjava";
@@ -74,8 +75,31 @@ export namespace androidfilesystem {
   };
 
   // heavy lifting is done in frida-fs here.
-  export const readFile = (path: string): Buffer => {
-    return fs.readFileSync(path);
+  export const readFile = (path: string): IAndroidFilesystem => {
+    const response: IAndroidFilesystem = {
+      files: fs.readFileSync(path),
+      path: path,
+      readable: true,
+      writable: true,
+    };
+    return response;
+  };
+
+  // heavy lifting is done in frida-fs here.
+  export const fileDownload = (pathFile: string): IAndroidFilesystem[] => {
+    let files = new Array()
+    if (fs.statSync(pathFile).isDirectory()) {
+      fs.readdirSync(pathFile).forEach( f => {
+        let dirPath = path.join(pathFile, f);
+        let isDirectory = fs.statSync(dirPath).isDirectory();
+        if (!isDirectory) {
+          files.push(readFile(path.join(pathFile, f)))
+        }
+      });
+    } else {
+      files.push(readFile(pathFile))
+    }
+    return files;
   };
 
   // heavy lifting is done in frida-fs here.
